@@ -197,10 +197,12 @@ class CustomPlayer:
         if game.is_loser(self) or game.is_winner(self) or (depth == 0):
             return self.score(game, self)#, best_move
         if maximizing_player:   
-            states = [(self.minimax(game.forecast_move(move),depth-1,False),move) for move in game.get_legal_moves(game.active_player)]
+            states = [(self.minimax(game.forecast_move(move),depth-1,False),move) 
+                            for move in game.get_legal_moves(game.active_player)]
             score, best_move = max(states, key=lambda x: x[0])
         else:   
-            states = [(self.minimax(game.forecast_move(move),depth-1,True),move) for move in game.get_legal_moves(game.active_player)]
+            states = [(self.minimax(game.forecast_move(move),depth-1,True),move) 
+                            for move in game.get_legal_moves(game.active_player)]
             score, best_move  = min(states, key=lambda x: x[0])
         return score, best_move
 
@@ -247,8 +249,6 @@ class CustomPlayer:
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
-        
-        
                 
         score, best_move = 0, (-1, -1)
         if game.is_loser(self) or game.is_winner(self) or (depth == 0):
