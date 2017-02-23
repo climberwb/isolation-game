@@ -125,7 +125,7 @@ class CustomPlayer:
         # immediately if there are no legal moves
         if legal_moves == (-1,-1):
             return
-                
+        move=None       
         try:
             # The search method call (alpha beta or minimax) should happen in
             # here in order to avoid timeout. The try/except block will
@@ -135,25 +135,23 @@ class CustomPlayer:
             if self.method == 'minimax':
                 #TODO add minimax call here
                 if self.iterative:
-                    #TODO finish condition
-                    pass
+                    very_large_branch = 1000000000000000000
+                    for d in range(0,very_large_branch):
+                        score, move = self.minimax(game,d)
                 else:
-                    pass
-                # print(self.score())
-                # print('in search')
-                score, move = self.minimax(game,self.search_depth)
-                # print('self',self.search_depth)
-                # print('iteration',self.iterative)
+                    score, move = self.minimax(game,self.search_depth)
                 return move
                 
+            elif self.method == "alphabeta":
+                score, move = self.alphabeta(game,self.search_depth)
                 # minimax(game, 1 )
         
         except Timeout:
             # Handle any actions required at timeout, if necessary
-            print('timeout!')
+            return move
 
         # Return the best move from the last completed search iteration
-        raise NotImplementedError
+        # raise NotImplementedError
         
     # def build_tree(games,depth,game=None):
     #     if game:
@@ -193,18 +191,20 @@ class CustomPlayer:
                 evaluation function directly.
         """
         
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise Timeout()
         score, best_move = 0, (-1, -1)
         if game.is_loser(self) or game.is_winner(self) or (depth == 0):
-            return self.score(game, self)#, best_move
-        if maximizing_player:   
+            return self.score(game, self), best_move
+        if maximizing_player:      
             states = [(self.minimax(game.forecast_move(move),depth-1,False),move) 
                             for move in game.get_legal_moves(game.active_player)]
-            score, best_move = max(states, key=lambda x: x[0])
+            score, best_move = max(states, key=lambda x: x[0][0])
         else:   
             states = [(self.minimax(game.forecast_move(move),depth-1,True),move) 
                             for move in game.get_legal_moves(game.active_player)]
-            score, best_move  = min(states, key=lambda x: x[0])
-        return score, best_move
+            score, best_move  = min(states, key=lambda x: x[0][0])
+        return score[0], best_move
 
         # TODO: finish this function!
         # raise NotImplementedError
