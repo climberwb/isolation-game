@@ -140,7 +140,7 @@ class CustomPlayer:
                 else:
                     pass
                 # print(self.score())
-                print('in search')
+                # print('in search')
                 score, move = self.minimax(game,self.search_depth)
                 # print('self',self.search_depth)
                 # print('iteration',self.iterative)
@@ -247,6 +247,34 @@ class CustomPlayer:
         """
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
-
+        
+        
+                
+        score, best_move = 0, (-1, -1)
+        if game.is_loser(self) or game.is_winner(self) or (depth == 0):
+            return self.score(game, self), best_move
+        if maximizing_player:   
+            states = []
+            for i,move in enumerate(game.get_legal_moves(game.active_player)):
+                score,best_move = self.alphabeta(game.forecast_move(move),depth-1,alpha,beta,False)
+                if score >= beta:
+                    break
+                else:
+                    alpha = score
+                states.append((score,move))
+            if states !=[]:
+                score, best_move = max(states, key=lambda x: x[0])
+        else:   
+            states = []
+            for i,move in enumerate(game.get_legal_moves(game.active_player)):
+                score,best_move = self.alphabeta(game.forecast_move(move),depth-1,alpha,beta,True)
+                if score <= alpha:
+                    break
+                else:
+                    beta = score
+                states.append((score,move))
+            if states!=[]:
+                score, best_move  = min(states, key=lambda x: x[0])
+        return score, best_move
         # TODO: finish this function!
         raise NotImplementedError

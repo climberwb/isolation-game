@@ -244,7 +244,7 @@ class Project1Test(unittest.TestCase):
             "The heuristic function should return a floating point")
 
     timeout(5)
-    @unittest.skip("Skip simple minimax test.")  # Uncomment this line to skip test
+    # @unittest.skip("Skip simple minimax test.")  # Uncomment this line to skip test
     def test_minimax_interface(self):
         """ Test CustomPlayer.minimax interface with simple input """
         h, w = 7, 7  # board size
@@ -275,7 +275,7 @@ class Project1Test(unittest.TestCase):
                              "branch being searched."))
 
     timeout(5)
-    @unittest.skip("Skip alphabeta test.")  # Uncomment this line to skip test
+    # @unittest.skip("Skip alphabeta test.")  # Uncomment this line to skip test
     def test_alphabeta_interface(self):
         """ Test CustomPlayer.alphabeta interface with simple input """
         h, w = 9, 9  # board size
@@ -306,7 +306,7 @@ class Project1Test(unittest.TestCase):
                              "branch being searched."))
 
     @timeout(5)
-    @unittest.skip("Skip get_move test.")  # Uncomment this line to skip test
+    # @unittest.skip("Skip get_move test.")  # Uncomment this line to skip test
     def test_get_move_interface(self):
         """ Test CustomPlayer.get_move interface with simple input """
         h, w = 9, 9  # board size
@@ -412,7 +412,7 @@ class Project1Test(unittest.TestCase):
 
             num_explored_valid = board.counts[0] == counts[idx][0]
             num_unique_valid = board.counts[1] == counts[idx][1]
-            
+
             self.assertTrue(num_explored_valid, WRONG_NUM_EXPLORED.format(
                 method, test_depth, counts[idx][0], board.counts[0]))
 
@@ -423,7 +423,7 @@ class Project1Test(unittest.TestCase):
                 method, test_depth, expected_moves[idx // 2], move))
 
     @timeout(20)
-    @unittest.skip("Skip alpha-beta test.")  # Uncomment this line to skip test
+    # @unittest.skip("Skip alpha-beta test.")  # Uncomment this line to skip test
     def test_alphabeta(self):
         """ Test CustomPlayer.alphabeta
 
