@@ -135,8 +135,8 @@ class CustomPlayer:
             if self.method == 'minimax':
                 #TODO add minimax call here
                 if self.iterative:
-                    very_large_branch = 1000000000000000000
-                    for d in range(0,very_large_branch):
+                    very_large_depth = 1000000000000000000
+                    for d in range(0,very_large_depth):
                         score, move = self.minimax(game,d)
                 else:
                     score, move = self.minimax(game,self.search_depth)
