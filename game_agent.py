@@ -112,7 +112,7 @@ class CustomPlayer:
     """
 
     def __init__(self, search_depth=3, score_fn=custom_score,
-                 iterative=True, method='minimax', timeout=10.):
+                 iterative=True, method='minimax', timeout=15.):
         self.search_depth = search_depth
         self.iterative = iterative
         self.score = score_fn
@@ -183,7 +183,7 @@ class CustomPlayer:
                             break
                 else:
                     score, move = self.minimax(game,self.search_depth)
-                print("\nOld state:\n{}".format(game.forecast_move(move).to_string()))
+                # print("\nOld state:\n{}".format(game.forecast_move(move).to_string()))
                 return move
                 
             elif self.method == "alphabeta":
@@ -197,7 +197,7 @@ class CustomPlayer:
                             break
                 else:
                     score, move = self.alphabeta(game,self.search_depth)
-                print("\nOld state:\n{}".format(game.forecast_move(move).to_string()))
+                # print("\nOld state:\n{}".format(game.forecast_move(move).to_string()))
                 return move
                 
                 # minimax(game, 1 )
@@ -205,7 +205,6 @@ class CustomPlayer:
         except Timeout:
             # Handle any actions required at timeout, if necessary
             # print("\nOld state:\n{}".format(game.forecast_move(move).to_string()))
-            print("\nOld state:\n{}".format(game.forecast_move(move).to_string()))
             return move
 
         # Return the best move from the last completed search iteration
