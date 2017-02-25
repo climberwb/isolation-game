@@ -14,13 +14,39 @@ class Timeout(Exception):
     """Subclass base exception for code clarity."""
     pass
 
-def opponent_minimum_heuristic():
+    
+def opponent_chase_heuristic(game,player):
+    """ Gives a higher priority to the moves that limit the opponents moves 
+        while still accounting for maximizing the number of the players own 
+        moves. this results in a chasing effect. 
+    """
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    player_moves = len(game.get_legal_moves(player))
+    import random
+    return float(player_moves - 2*opp_moves)
 
-
+def shy_player_heuristic(game,player):
+    """ (Opposite of opponent_chase_heuristic) Gives a higher priority to the moves that increase the players moves 
+        while still accounting for maximizing the number of the players own 
+        moves. this results in a chasing effect. 
+    """
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    player_moves = len(game.get_legal_moves(player))
+    return float(2*player_moves - opp_moves)
+    
+def opponent_minimum_heuristic(game,player):
+    """" Gives the highest score to the moves that 
+         minimizes the opponents moves the most. The
+         score is inversly proportional to the ammount of remaining moves
+         the opponent has. 
+    """
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
     division_by_zero_factor =1e-4
     opp_moves_inverse  =  1/(opp_moves+division_by_zero_factor)
+    return opp_moves_inverse
 
+    
+     
 def custom_score(game, player):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
@@ -46,14 +72,12 @@ def custom_score(game, player):
     
     # TODO: finish this function!
     if game.is_loser(player):
-        return -10000000000000000.
+        return float('-inf')
 
     if game.is_winner(player):
-        return 100000000000000000.
+        return float('inf')
 
-    moves = len(game.get_legal_moves(player))
-
-    return float( moves)
+    return opponent_chase_heuristic(game,player)
 
 
 
@@ -94,7 +118,7 @@ class CustomPlayer:
         self.score = score_fn
         self.method = method
         self.time_left = None
-        self.TIMER_THRESHOLD = timeout*3
+        self.TIMER_THRESHOLD = timeout
 
     def get_move(self, game, legal_moves, time_left):
         """Search for the best move from the available legal moves and return a
@@ -152,24 +176,36 @@ class CustomPlayer:
                 #TODO add minimax call here
                 if self.iterative:
                     for d in range(1,very_large_depth):
+                        if self.time_left() < self.TIMER_THRESHOLD:
+                            raise Timeout()
                         score, move = self.minimax(game,d)
+                        if game.get_legal_moves()==[]:
+                            break
                 else:
                     score, move = self.minimax(game,self.search_depth)
+                print("\nOld state:\n{}".format(game.forecast_move(move).to_string()))
                 return move
                 
             elif self.method == "alphabeta":
                  #TODO add minimax call here
                 if self.iterative:
                     for d in range(1,very_large_depth):
+                        if self.time_left() < self.TIMER_THRESHOLD:
+                            raise Timeout()
                         score, move = self.alphabeta(game,d)
+                        if game.get_legal_moves()==[]:
+                            break
                 else:
                     score, move = self.alphabeta(game,self.search_depth)
+                print("\nOld state:\n{}".format(game.forecast_move(move).to_string()))
                 return move
                 
                 # minimax(game, 1 )
         
         except Timeout:
             # Handle any actions required at timeout, if necessary
+            # print("\nOld state:\n{}".format(game.forecast_move(move).to_string()))
+            print("\nOld state:\n{}".format(game.forecast_move(move).to_string()))
             return move
 
         # Return the best move from the last completed search iteration
@@ -279,27 +315,27 @@ class CustomPlayer:
             states = []
             score=float("inf")
             for i,move in enumerate(game.get_legal_moves(game.active_player)):
+                if self.time_left() < self.TIMER_THRESHOLD:
+                    raise Timeout()
                 score,best_move = self.alphabeta(game.forecast_move(move),depth-1,alpha,beta,False)
                 if score >= beta:
                     return score,move
-                    break
                 else:
                     alpha = max(score,alpha)
                     states.append((score,move))
- 
             return  max(states, key=lambda x: x[0])
         else:   
             states = []
             score=float("-inf")
             for i,move in enumerate(game.get_legal_moves(game.active_player)):
+                if self.time_left() < self.TIMER_THRESHOLD:
+                    raise Timeout()
                 score,best_move = self.alphabeta(game.forecast_move(move),depth-1,alpha,beta,True)
                 if score <= alpha:
                     return score,move
-                    break
                 else:
                     beta = min(score,beta)
                     states.append((score,move))
-
             return min(states, key=lambda x: x[0])
         return score, best_move
         # TODO: finish this function!
